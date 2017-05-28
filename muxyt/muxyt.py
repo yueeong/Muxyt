@@ -38,6 +38,7 @@ def join_active_session(session_name):
 def show_users_of_session(session_name):
     '''
     subproc tmux -S /tmp/sharedsocket list-clients -t <session_name>
+    grep for pts/N etc and who -u | grep "pts/9" | awk '{print $1}'
     
     :param session_name: 
     :return: 
@@ -58,13 +59,14 @@ if __name__ == "__main__":
 
 
     # Optional argument which requires a parameter (eg. -d test)
-    parser.add_argument("-js", "--join_session", type=str, action="store", dest="session_to_join")
-    parser.add_argument("-su", "--show_session_users", type=str, action="store", dest="session_users_to_show")
-    parser.add_argument("-ls", "--list_all_sessions", action="store_true", default=False, dest="list_all_sessions")
+    mutex_grp = parser.add_mutually_exclusive_group()
+    mutex_grp.add_argument("-js", "--join_session", type=str, action="store", dest="session_to_join")
+    mutex_grp.add_argument("-su", "--show_session_users", type=str, action="store", dest="session_users_to_show")
+    mutex_grp.add_argument("-ls", "--list_all_sessions", action="store_true", default=False, dest="list_all_sessions")
 
 
     # Specify output of '--version'
-    parser.add_argument(
+    mutex_grp.add_argument(
         '-V',
         '--version',
         action='version',
