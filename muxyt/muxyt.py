@@ -9,6 +9,7 @@ __license__ = "MIT"
 
 
 import argparse
+import subprocess
 from lib.logger import setup_logger
 
 logger = setup_logger(logfile=None)
@@ -18,8 +19,35 @@ def main(args):
     """ Main entry point of the app """
 
     logger.info("hello world")
-    logger.info(args.joinsession)
+    # logger.info(args)
+    if args.session_to_join is not None:
+        logger.info(args)
+    elif args.session_users_to_show is not None:
+        logger.info(args.session_users_to_show)
+        show_users_of_session()
+    elif args.list_all_sessions is not None:
+        logger.info(args.list_all_sessions)
 
+def join_active_session(session_name):
+    '''
+    subprocess to run tmux -S /tmp/sharedsocket attach -t session_name
+    :param session_name: 
+    :return: 
+    '''
+
+def show_users_of_session(session_name):
+    '''
+    subproc tmux -S /tmp/sharedsocket list-clients -t <session_name>
+    
+    :param session_name: 
+    :return: 
+    '''
+
+def list_all_sessions():
+    '''
+    subproc  tmux -S /tmp/sharesession ls
+    :return: 
+    '''
 
 if __name__ == "__main__":
     """ This is executed when run from the command line """
@@ -30,13 +58,14 @@ if __name__ == "__main__":
 
 
     # Optional argument which requires a parameter (eg. -d test)
-    parser.add_argument("-js", "--joinsession", action="store", dest="joinsession")
-    parser.add_argument("-ss", "--joinsession", action="store_true", dest="showsession")
-    parser.add_argument("-ls", "--listsessions", action="store_true", dest="listsessions")
+    parser.add_argument("-js", "--join_session", type=str, action="store", dest="session_to_join")
+    parser.add_argument("-su", "--show_session_users", type=str, action="store", dest="session_users_to_show")
+    parser.add_argument("-ls", "--list_all_sessions", action="store_true", default=False, dest="list_all_sessions")
 
 
     # Specify output of '--version'
     parser.add_argument(
+        '-V',
         '--version',
         action='version',
         version='%(prog)s (version {version})'.format(version=__version__))
