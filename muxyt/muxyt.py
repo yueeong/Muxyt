@@ -82,7 +82,8 @@ if __name__ == "__main__":
     # Required positional argument
     #parser.add_argument("thing", help="Required positional argument")
 
-
+    # import os
+    # pprint(os.environ)
     # Optional argument which requires a parameter (eg. -d test)
     mutex_grp = parser.add_mutually_exclusive_group()
     mutex_grp.add_argument("-js", "--join_session", type=str, action="store", dest="session_to_join")
