@@ -221,6 +221,6 @@ def _safe_unicode(s):
         return repr(s)
 
 
-if __name__ == "__main__":
-    logger = setup_logger()
-    logger.info("hello")
+# if __name__ == "__main__":
+#     logger = setup_logger()
+#     logger.info("hello")
