@@ -19,7 +19,6 @@ def main(args):
     uu = UserUp()
 
     if args.session_to_join is not None:
-        # print(args)
         uu.join_active_session(args.session_to_join)
 
     elif args.session_users_to_show is not None:
@@ -40,6 +39,7 @@ class UserUp():
         '''
         list_of_sessions = self.tserver.list_sessions()
         # print(list_of_sessions)
+        print('Session: <Name> (no. connected)')
         for each in list_of_sessions:
             print('Session: ' + each.name + ' (' + each.attached + ')')
 
