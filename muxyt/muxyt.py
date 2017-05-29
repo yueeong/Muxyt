@@ -10,48 +10,64 @@ __license__ = "MIT"
 
 import argparse
 import subprocess
-from lib.logger import setup_logger
-
-logger = setup_logger(logfile=None)
-
+import libtmux
+from pprint import pprint
 
 def main(args):
     """ Main entry point of the app """
 
-    logger.info("hello world")
-    # logger.info(args)
+    uu = UserUp()
+
     if args.session_to_join is not None:
-        logger.info(args)
+        print(args)
+        uu.join_active_session(args.session_to_join)
+
     elif args.session_users_to_show is not None:
-        logger.info(args.session_users_to_show)
-        show_users_of_session()
+        print(args.session_users_to_show)
+
     elif args.list_all_sessions is not None:
-        logger.info(args.list_all_sessions)
+        print(args.list_all_sessions)
+        uu.list_all_sessions()
 
-def join_active_session(session_name):
-    '''
-    subprocess to run tmux -S /tmp/sharedsocket attach -t session_name
-    :param session_name: 
-    :return: 
-    '''
+class UserUp():
+    def __init__(self):
+        self.tserver = libtmux.Server(socket_path='/tmp/ttt')
 
-def show_users_of_session(session_name):
-    '''
-    subproc tmux -S /tmp/sharedsocket list-clients -t <session_name>
-    grep for pts/N etc and who -u | grep "pts/9" | awk '{print $1}'
-    
-    :param session_name: 
-    :return: 
-    '''
+    def list_all_sessions(self):
+        '''
+        subproc  tmux -S /tmp/sharesession ls
+        :return: 
+        '''
+        list_of_sessions = self.tserver.list_sessions()
+        print(list_of_sessions)
+        for each in list_of_sessions:
+            print(each)
+        pprint(vars(list_of_sessions[1]))
+        print(args)
 
-def list_all_sessions():
-    '''
-    subproc  tmux -S /tmp/sharesession ls
-    :return: 
-    '''
+    def show_users_of_session(self, session_name):
+        '''
+        subproc tmux -S /tmp/sharedsocket list-clients -t <session_name>
+        grep for pts/N etc and who -u | grep "pts/9" | awk '{print $1}'
+
+        :param session_name: 
+        :return: 
+        '''
+        print(session_name)
+
+    def join_active_session(self, session_name):
+        '''
+        subprocess to run tmux -S /tmp/sharedsocket attach -t session_name
+        :param session_name: 
+        :return: 
+        '''
+        print(session_name)
+        print(self.tserver.attach_session(session_name))
+
+
+
 
 if __name__ == "__main__":
-    """ This is executed when run from the command line """
     parser = argparse.ArgumentParser()
 
     # Required positional argument
@@ -73,5 +89,4 @@ if __name__ == "__main__":
         version='%(prog)s (version {version})'.format(version=__version__))
 
     args = parser.parse_args()
-
     main(args)
