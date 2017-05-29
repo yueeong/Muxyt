@@ -9,7 +9,7 @@ __license__ = "MIT"
 
 
 import argparse
-import subprocess
+import yaml
 import libtmux
 from pprint import pprint
 
