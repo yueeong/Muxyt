@@ -19,14 +19,14 @@ def main(args):
     uu = UserUp()
 
     if args.session_to_join is not None:
-        print(args)
+        # print(args)
         uu.join_active_session(args.session_to_join)
 
     elif args.session_users_to_show is not None:
         print(args.session_users_to_show)
 
     elif args.list_all_sessions is not None:
-        print(args.list_all_sessions)
+        # print(args.list_all_sessions)
         uu.list_all_sessions()
 
 class UserUp():
@@ -39,11 +39,13 @@ class UserUp():
         :return: 
         '''
         list_of_sessions = self.tserver.list_sessions()
-        print(list_of_sessions)
+        # print(list_of_sessions)
         for each in list_of_sessions:
-            print(each)
-        pprint(vars(list_of_sessions[1]))
-        print(args)
+            print('Session: ' + each.name + ' (' + each.attached + ')')
+
+            # print(each._info)
+            # print(self.tserver.(each))
+
 
     def show_users_of_session(self, session_name):
         '''
@@ -61,8 +63,15 @@ class UserUp():
         :param session_name: 
         :return: 
         '''
-        print(session_name)
-        print(self.tserver.attach_session(session_name))
+        print('Joining : ' + session_name + '.....')
+        sess_to_join = self.tserver.find_where({"session_name": session_name})
+        try:
+            self.tserver.attach_session(sess_to_join.id)
+        except AttributeError:
+            print('Session: \"' + session_name + '\"  Not Found..')
+        except:
+            print('Some error occurred.')
+
 
 
 
