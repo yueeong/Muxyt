@@ -8,7 +8,7 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 import argparse
-from lib.logger import setup_logger
+from utils.logger import setup_logger
 
 logger = setup_logger(logfile=None)
 
