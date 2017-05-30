@@ -8,15 +8,13 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 import argparse
-import sys
-import yaml
-from pprint import pprint
+
 import libtmux
-from utils.logger import setup_logger
+import yaml
 
+from utils import logger
 
-
-logger = setup_logger(logfile=None)
+logger = logger.setup_logger(logfile=None)
 
 def main(args):
 
@@ -24,7 +22,7 @@ def main(args):
         svrconfig = load_config("/etc/muxytsvr.conf")
     except FileNotFoundError:
         logger.info("Could not load system level config. Loading local config file")
-        svrconfig = load_config("muxytsvr/config/config.yaml")
+        svrconfig = load_config("config/config.yaml")
 
     su = SvrUp(config=svrconfig)
 
@@ -54,6 +52,12 @@ class SvrUp():
         for each in self.nodes:
             print(each)
             self.tserver.new_session(session_name=each['name'])
+            ses = self.tserver.find_where({"session_name": each['name']})
+            # print(dir(ses))
+            #TODO method to go to the term server it resides and clearline
+            # TODO Activate the telnet here
+            ses.attached_pane.send_keys('ls -lart;echo boop')
+            ses.attached_pane.send_keys('telnet ' + each['term_svr'] + ' ' + each['port'])
 
 
 
@@ -67,7 +71,7 @@ class SvrUp():
 
     def reload_server(self):
         '''
-
+        finds sessions not created and starts
         :return:
         '''
         pass
