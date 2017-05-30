@@ -25,6 +25,27 @@ class SvrUp():
     def __init__(self, config):
         self.tserver = libtmux.Server(socket_path=config.socket_path)
 
+    def start_server(self):
+        '''
+
+        :return:
+        '''
+        pass
+
+    def stop_server(self):
+        '''
+
+        :return:
+        '''
+        pass
+
+    def reload_server(self):
+        '''
+
+        :return:
+        '''
+        pass
+
 
 
 

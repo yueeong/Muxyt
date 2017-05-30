@@ -17,6 +17,10 @@ def main(args):
     """ Main entry point of the app """
 
     uu = UserUp()
+    try:
+        config = load_config('/etc/muxytsvr.conf')
+    except FileNotFoundError:
+        print()
 
     if args.session_to_join is not None:
         uu.join_active_session(args.session_to_join)
@@ -27,6 +31,14 @@ def main(args):
     elif args.list_all_sessions is not None:
         # print(args.list_all_sessions)
         uu.list_all_sessions()
+
+def load_config(path):
+    with open(path, 'r') as conffile:
+        try:
+            yamlconf = yaml.load(conffile)
+            return yamlconf
+        except:
+            print('**** Could not load ' + path)
 
 class UserUp():
     def __init__(self):
