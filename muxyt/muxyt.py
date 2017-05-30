@@ -16,11 +16,15 @@ from pprint import pprint
 def main(args):
     """ Main entry point of the app """
 
-    uu = UserUp()
+
+
     try:
-        config = load_config('/etc/muxytsvr.conf')
+        config = load_config("/etc/muxytsvr.conf")
     except FileNotFoundError:
-        print()
+        print("Could not load system level config. Loading local config file")
+        config = load_config("muxytsvr/config/config.yaml")
+
+    uu = UserUp(config=config)
 
     if args.session_to_join is not None:
         uu.join_active_session(args.session_to_join)
@@ -41,8 +45,8 @@ def load_config(path):
             print('**** Could not load ' + path)
 
 class UserUp():
-    def __init__(self):
-        self.tserver = libtmux.Server(socket_path='/tmp/ttt')
+    def __init__(self, config):
+        self.tserver = libtmux.Server(socket_path=config['socket_path'])
 
     def list_all_sessions(self):
         '''

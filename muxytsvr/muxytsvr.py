@@ -8,36 +8,62 @@ __version__ = "0.1.0"
 __license__ = "MIT"
 
 import argparse
+import sys
 import yaml
+from pprint import pprint
+import libtmux
 from utils.logger import setup_logger
 
-import libtmux
+
 
 logger = setup_logger(logfile=None)
 
 def main(args):
-    svrconfig = load_config("/etc/muxytsvr.conf")
 
-    su = SvrUp(svrconfig)
+    try:
+        svrconfig = load_config("/etc/muxytsvr.conf")
+    except FileNotFoundError:
+        logger.info("Could not load system level config. Loading local config file")
+        svrconfig = load_config("muxytsvr/config/config.yaml")
+
+    su = SvrUp(config=svrconfig)
+
+    if args.start_server is not False:
+        su.start_server()
+
+    elif args.stop_server is not False:
+        su.stop_server()
+
+    elif args.reload_server is not False:
+        su.reload_server()
 
 
 class SvrUp():
     def __init__(self, config):
-        self.tserver = libtmux.Server(socket_path=config.socket_path)
+        self.tserver = libtmux.Server(socket_path=config["socket_path"])
+        self.nodes = config['nodes']
+        for each in self.nodes:
+            logger.debug(each['name'])
 
     def start_server(self):
         '''
 
         :return:
         '''
-        pass
+        logger.info("start")
+        for each in self.nodes:
+            print(each)
+            self.tserver.new_session(session_name=each['name'])
+
+
 
     def stop_server(self):
         '''
 
         :return:
         '''
-        pass
+        logger.info('Stopping all sessions and server...')
+        self.tserver.kill_server()
 
     def reload_server(self):
         '''
@@ -54,21 +80,29 @@ def load_config(path):
     loads config yaml
     :return: 
     '''
-    with open(path,'r') as file:
-        try:
-            yamlconf = yaml.load(file)
-            return yamlconf
-        except:
-            logger.error("Could not load : " + path)
+    try:
+        with open(path,'r') as file:
+            try:
+                yamlconf = yaml.safe_load(file)
+                return yamlconf
+            except:
+                logger.error("yaml Could not load : " + path)
+    except FileNotFoundError as fnferr:
+        logger.error("Could not find : " + path)
+        raise fnferr
+    except Exception as e:
+        logger.error("Something went wrong loading : " + path)
+        logger.error(e)
+
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     mutex_group = parser.add_mutually_exclusive_group()
-    mutex_group.add_argument("-start", "--start_server", default=False, action="store_true", dest="start_server")
-    mutex_group.add_argument("-stop", "--stop_server",  default=False, action="store_true", dest="stop_server")
-    mutex_group.add_argument("-rl", "--reload_server", default=False, action="store_true", dest="reload_server")
+    mutex_group.add_argument("-start", "--start_server",  action="store_true", dest="start_server")
+    mutex_group.add_argument("-stop", "--stop_server",   action="store_true", dest="stop_server")
+    mutex_group.add_argument("-rl", "--reload_server",  action="store_true", dest="reload_server")
 
 
     # Specify output of '--version'

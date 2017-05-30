@@ -1,0 +1,6 @@
+---
+socket_path : "/tmp/muxytsvr.socket"
+
+nodes:
+  -  { name: "tbal-1852-1", term_svr: "10.1.1.1", port: "2001"}
+  -  { name: "tbal-1815-1", term_svr: "10.1.1.1", port: "2002"}
